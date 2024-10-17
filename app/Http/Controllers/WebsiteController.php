@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Website;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class WebsiteController extends Controller
@@ -21,7 +22,7 @@ class WebsiteController extends Controller
     }
 
     // Store a new website
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         Website::create($request->all());
         return redirect('websites')->with('success', 'Website created successfully.');
@@ -39,7 +40,7 @@ class WebsiteController extends Controller
     {
         $website = Website::findOrFail($id);
         $website->update($request->all());
-        return redirect()->route('websites')->with('success', 'Website updated successfully.');
+        return redirect()->route('websites.index')->with('success', 'Website updated successfully.');
     }
 
     // Delete a website
@@ -47,7 +48,7 @@ class WebsiteController extends Controller
     {
         $website = Website::findOrFail($id);
         $website->delete();
-        return redirect()->route('websites')->with('success', 'Website deleted successfully.');
+        return redirect()->route('websites.index')->with('success', 'Website deleted successfully.');
     }
 }
 

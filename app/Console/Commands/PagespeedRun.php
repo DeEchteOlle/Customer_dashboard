@@ -2,7 +2,11 @@
 
 namespace App\Console\Commands;
 
+use App\Models\PagespeedResult;
+use App\Models\Website;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class PagespeedRun extends Command
 {
@@ -18,13 +22,12 @@ class PagespeedRun extends Command
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Retrieve Pagespeed results and store them';
 
     /**
      * Execute the console command.
      */
     public function handle()
     {
-        var_dump('Hello World');
     }
 }

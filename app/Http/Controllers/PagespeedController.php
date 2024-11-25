@@ -8,13 +8,41 @@ use Illuminate\Support\Facades\Http;
 
 class PagespeedController extends Controller
 {
-    public function index() {
-//        $key = 'AIzaSyDDlvOhxLk6HM2R0i4h1Fq-4avYjuIV5NY';
-//        $url = 'https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=https://adwise.nl&key=' . $key;
-//        $response = Http::get($url);
-//        return $response->json();
-        Website::create([
-            'url' => 'https://adwise.nl',
-        ]);
+    public function index(Request $request)
+    {
+        $websiteId = $request->input('website_id');
+        $website = Website::with('pagespeedResults')->find($websiteId);
+
+        if (!$website) {
+            return response()->json(['message' => 'Website not found'], 404);
+        }
+
+        $url = $website->url;
+        $key = env('APP_API_KEY');
+        $apiUrl = "https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url={$url}&key={$key}";
+
+        $response = Http::get($apiUrl);
+
+        if ($response->successful()) {
+            $data = $response->json();
+
+            $website->pagespeedResults()->create(['website_url' => $url, 'performance_score' => $data['lcp']['inp']['cls']['fcp']['ttfb'] ?? null,]);
+
+            return response()->json(['message' => 'PageSpeed results successfully saved']);
+        }
+
+        return response()->json(['message' => 'API call failed', 'error' => $response->body()], 500);
     }
+
+    public function viewResults($websiteId)
+    {
+        $website = Website::with('pagespeedResults')->find($websiteId);
+
+        if (!$website) {
+            return response()->json(['message' => 'Website not found'], 404);
+        }
+
+        return view('dashboard', ['pagespeedResults' => $website->pagespeedResults]);
+    }
+
 }

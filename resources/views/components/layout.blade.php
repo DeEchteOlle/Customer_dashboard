@@ -19,7 +19,7 @@
                     </div>
                     <div class="hidden md:block">
                         <div class="ml-10 flex items-baseline space-x-4">
-                            <x-nav-link href="/" :active="request()->is('/')">Home</x-nav-link>
+                            <x-nav-link href="/" :active="request()->is('/')">Results</x-nav-link>
                             <x-nav-link href="/websites" :active="request()->is('websites')">Websites</x-nav-link>
                             <x-nav-link href="{{ url('websites/create') }}" :active="request()->is('websites/create')">Create</x-nav-link>
                         </div>

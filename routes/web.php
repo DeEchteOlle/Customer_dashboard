@@ -1,14 +1,10 @@
 <?php
 
-use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PagespeedController;
 use App\Models\PagespeedResult;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\WebsiteController;
-use App\Http\Controllers\DashboardController;
 
-
-Route::get('/', [DashboardController::class, 'index']);
 Route::get('/', function () {
     $results = PagespeedResult::with('website')->get(); // Ensure 'website' is loaded
     return view('pagespeed.results', compact('results'));

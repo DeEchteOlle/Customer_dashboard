@@ -9,12 +9,13 @@
             </div>
 
             @php
+                $latest = $pagespeedResults->last();
                 $metrics = [
-                    'LCP' => ['value' => $website->lcp, 'threshold' => 2.5, 'unit' => 's'],
-                    'INP' => ['value' => $website->inp, 'threshold' => 200, 'unit' => 'ms'],
-                    'CLS' => ['value' => $website->cls, 'threshold' => 0.1, 'unit' => ''],
-                    'FCP' => ['value' => $website->fcp, 'threshold' => 1.8, 'unit' => 's'],
-                    'TTFB' => ['value' => $website->ttfb, 'threshold' => 0.6, 'unit' => 's'],
+                    'LCP'  => ['value' => $latest?->lcp,  'threshold' => 2.5,  'unit' => 's'],
+                    'INP'  => ['value' => $latest?->inp,  'threshold' => 200,  'unit' => 'ms'],
+                    'CLS'  => ['value' => $latest?->cls,  'threshold' => 0.1,  'unit' => ''],
+                    'FCP'  => ['value' => $latest?->fcp,  'threshold' => 1.8,  'unit' => 's'],
+                    'TTFB' => ['value' => $latest?->ttfb, 'threshold' => 0.6,  'unit' => 's'],
                 ];
             @endphp
 

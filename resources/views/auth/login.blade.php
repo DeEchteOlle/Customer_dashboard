@@ -36,7 +36,7 @@
                     <h3> Or </h3>
                 </div>
                 <div class="">
-                    <a href="{{ url('auth.register') }}">
+                    <a href="{{ url('register') }}">
                         <button type="button"
                                 class="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2">
                             register

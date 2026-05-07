@@ -23,9 +23,9 @@ class WebsiteController extends Controller
     {
         $validatedData = $request->validate([
             'name' => 'required|max:255',
-            'url' => 'required|url','url:https,http',
+            'url'  => 'required|url',
         ]);
-        Website::create($request->all());
+        Website::create($validatedData);
         return redirect('websites')->with('success', 'Website created successfully.');
     }
     public function edit($id)

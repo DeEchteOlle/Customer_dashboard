@@ -28,6 +28,13 @@ class PagespeedRun extends Command
      */
     public function handle()
     {
+        $key = config('services.pagespeed.api_key');
+
+        if (empty($key)) {
+            $this->error('PAGESPEED_API_KEY is not set in your .env file.');
+            return 1;
+        }
+
         $websites = Website::all();
         $totalSteps = $websites->count();
 
@@ -42,11 +49,12 @@ class PagespeedRun extends Command
 
         foreach ($websites as $website) {
             $url = $website->url;
-            $key = config('services.pagespeed.api_key');
-            $apiUrl = "https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=$url&key=$key";
 
             // Call the Google PageSpeed Insights API
-            $response = Http::timeout(500)->get($apiUrl);
+            $response = Http::timeout(500)->get('https://www.googleapis.com/pagespeedonline/v5/runPagespeed', [
+                'url' => $url,
+                'key' => $key,
+            ]);
 
             if ($response->successful()) {
                 $data = $response->json();
@@ -77,7 +85,10 @@ class PagespeedRun extends Command
                     'ttfb' => $metrics['ttfb'],
                 ]);
             } else {
-                $this->error("Failed to retrieve PageSpeed data for: $url");
+                $this->newLine();
+                $this->error("Failed for: $url — HTTP {$response->status()}");
+                $errorBody = $response->json('error.message') ?? $response->body();
+                $this->line("  → $errorBody");
             }
 
             // Advance the progress bar

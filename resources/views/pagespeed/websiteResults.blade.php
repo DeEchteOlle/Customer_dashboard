@@ -1,6 +1,5 @@
 <x-layout>
     <x-slot:heading>Website Performance Details</x-slot:heading>
-    <body class="bg-gray-100 text-gray-900">
     <div class="container mx-auto py-8">
         <div class="bg-white rounded-lg shadow-lg p-8 max-w-3xl mx-auto">
             <div class="text-center mb-6">
@@ -25,8 +24,8 @@
                         <h3 class="text-lg font-semibold">{{ $name }}</h3>
                         <p class="text-gray-700 mt-2">
                             Result:
-                            <span class="{{ $data['value'] > $data['threshold'] ? 'text-red-500' : 'text-green-500' }}">
-                                {{ $data['value'] > $data['threshold'] ? 'Poor' : 'Good' }}
+                            <span class="{{ $data['value'] === null ? 'text-gray-400' : ($data['value'] > $data['threshold'] ? 'text-red-500' : 'text-green-500') }}">
+                                {{ $data['value'] === null ? 'N/A' : ($data['value'] > $data['threshold'] ? 'Poor' : 'Good') }}
                             </span>
                         </p>
                         <p class="text-sm text-gray-500 mt-1">Recommended: &lt; {{ $data['threshold'] }}{{ $data['unit'] }}</p>
@@ -41,5 +40,4 @@
             </div>
         </div>
     </div>
-    </body>
 </x-layout>

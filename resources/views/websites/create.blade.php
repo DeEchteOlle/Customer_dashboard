@@ -50,6 +50,7 @@
                     </button>
                 </a>
             </div>
+        </div>
     </form>
 </x-layout>
 

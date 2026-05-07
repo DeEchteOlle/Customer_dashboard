@@ -42,8 +42,8 @@ class PagespeedRun extends Command
 
         foreach ($websites as $website) {
             $url = $website->url;
-            $key = env('PAGESPEED_API_KEY'); // Ensure your API key is in the .env file
-            $apiUrl = "https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url={$url}&key={$key}";
+            $key = config('services.pagespeed.api_key');
+            $apiUrl = "https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=$url&key=$key";
 
             // Call the Google PageSpeed Insights API
             $response = Http::timeout(500)->get($apiUrl);
@@ -51,13 +51,20 @@ class PagespeedRun extends Command
             if ($response->successful()) {
                 $data = $response->json();
 
-                // Extract required metrics
+                // Extract required metrics and convert to consistent units:
+                // LCP/FCP/TTFB → seconds (API returns ms), CLS → decimal score (API returns ×100), INP → ms
+                $rawLcp  = $data['loadingExperience']['metrics']['LARGEST_CONTENTFUL_PAINT_MS']['percentile'] ?? null;
+                $rawInp  = $data['loadingExperience']['metrics']['INTERACTION_TO_NEXT_PAINT']['percentile'] ?? null;
+                $rawCls  = $data['loadingExperience']['metrics']['CUMULATIVE_LAYOUT_SHIFT_SCORE']['percentile'] ?? null;
+                $rawFcp  = $data['lighthouseResult']['audits']['first-contentful-paint']['numericValue'] ?? null;
+                $rawTtfb = $data['lighthouseResult']['audits']['server-response-time']['numericValue'] ?? null;
+
                 $metrics = [
-                    'lcp' => $data['loadingExperience']['metrics']['LARGEST_CONTENTFUL_PAINT_MS']['percentile'] ?? null,
-                    'inp' => $data['loadingExperience']['metrics']['INTERACTION_TO_NEXT_PAINT']['percentile'] ?? null,
-                    'cls' => $data['loadingExperience']['metrics']['CUMULATIVE_LAYOUT_SHIFT_SCORE']['percentile'] ?? null,
-                    'fcp' => $data['lighthouseResult']['audits']['first-contentful-paint']['numericValue'] ?? null,
-                    'ttfb' => $data['lighthouseResult']['audits']['server-response-time']['numericValue'] ?? null,
+                    'lcp'  => $rawLcp  !== null ? round($rawLcp / 1000, 3)  : null,
+                    'inp'  => $rawInp,
+                    'cls'  => $rawCls  !== null ? round($rawCls / 100, 3)   : null,
+                    'fcp'  => $rawFcp  !== null ? round($rawFcp / 1000, 3)  : null,
+                    'ttfb' => $rawTtfb !== null ? round($rawTtfb / 1000, 3) : null,
                 ];
 
                 // Store metrics in the database
@@ -70,7 +77,7 @@ class PagespeedRun extends Command
                     'ttfb' => $metrics['ttfb'],
                 ]);
             } else {
-                $this->error("Failed to retrieve PageSpeed data for: {$url}");
+                $this->error("Failed to retrieve PageSpeed data for: $url");
             }
 
             // Advance the progress bar

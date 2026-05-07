@@ -34,10 +34,14 @@ class WebsiteController extends Controller
         return view('websites.edit', compact('website'));
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, $id): RedirectResponse
     {
         $website = Website::findOrFail($id);
-        $website->update($request->all());
+        $validatedData = $request->validate([
+            'name' => 'required|max:255',
+            'url'  => 'required|url',
+        ]);
+        $website->update($validatedData);
         return redirect()->route('websites.index')->with('success', 'Website updated successfully.');
     }
     public function delete($id)

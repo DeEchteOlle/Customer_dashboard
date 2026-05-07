@@ -11,7 +11,7 @@ class PagespeedResult extends Model
 
     protected $fillable = ['lcp', 'inp', 'cls', 'fcp', 'ttfb', 'website_id'];
 
-    public function website()
+    public function website(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Website::class);
     }

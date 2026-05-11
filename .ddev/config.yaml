@@ -15,6 +15,14 @@ web_environment: []
 corepack_enable: false
 default_container_timeout: "240"
 
+# Draait `schedule:work` als achtergrondproces in de webcontainer.
+# schedule:work controleert elke minuut of er een taak uitgevoerd moet worden
+# (zelfde gedrag als de cronjob `* * * * * php artisan schedule:run` op een echte server).
+web_extra_daemons:
+  - name: laravel-scheduler
+    command: "php artisan schedule:work"
+    directory: /var/www/html
+
 # Key features of DDEV's config.yaml:
 
 # name: <projectname> # Name of the project, automatically provides

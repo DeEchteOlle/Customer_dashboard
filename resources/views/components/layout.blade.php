@@ -15,15 +15,24 @@
             <div class="flex h-16 items-center justify-between">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
-                        <img class="h-8 w-8 rounded-full" src="images/dashboard_logo_32x32.png" alt="Your Company">
+                        <img class="h-8 w-8 rounded-full" src="{{ asset('images/dashboard_logo_32x32.png') }}" alt="Your Company">
                     </div>
-                    <div class="hidden md:block">
-                        <div class="ml-10 flex items-baseline space-x-4">
+                    <div class="hidden md:block ">
+                        <div class="ml-10 flex items-baseline space-x-4 ">
                             <x-nav-link href="/" :active="request()->is('/')">Results</x-nav-link>
                             <x-nav-link href="/websites" :active="request()->is('websites')">Websites</x-nav-link>
                             <x-nav-link href="{{ url('websites/create') }}" :active="request()->is('websites/create')">Create</x-nav-link>
                         </div>
                     </div>
+                </div>
+                <div class="hidden md:flex items-center gap-4">
+                    <span class="text-white text-sm">{{ auth()->user()?->email }}</span>
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="text-sm text-gray-300 hover:text-white">
+                            Uitloggen
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -36,8 +45,11 @@
         </div>
     </nav>
     <header class="bg-white shadow">
-        <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+        <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 flex items-center justify-between">
             <h1 class="text-3xl font-bold tracking-tight text-gray-900">{{ $heading }}</h1>
+            @isset($actions)
+                <div>{{ $actions }}</div>
+            @endisset
         </div>
     </header>
     <main>

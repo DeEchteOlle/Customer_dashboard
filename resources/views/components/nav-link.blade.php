@@ -1,7 +1,11 @@
-@props(['active' => false, 'type' => 'a'])
-<a class="{{ $active  ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'}} rounded-md px-3 py-2 text-sm font-medium text-white"
-   aria-current="{{ $active ? 'page' : 'false'}}"
-    {{ $attributes }}
->{{ $slot }} </a>
+@props(['active'])
 
+@php
+$classes = ($active ?? false)
+            ? 'inline-flex items-center px-1 pt-1 border-b-2 border-white text-sm font-medium leading-5 text-white focus:outline-none transition duration-150 ease-in-out'
+            : 'inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium leading-5 text-gray-300 hover:text-white hover:border-gray-300 focus:outline-none transition duration-150 ease-in-out';
+@endphp
 
+<a {{ $attributes->merge(['class' => $classes]) }}>
+    {{ $slot }}
+</a>

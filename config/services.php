@@ -39,4 +39,9 @@ return [
         'api_key' => env('PAGESPEED_API_KEY'),
     ],
 
+    'alerts' => [
+        // Vul ALERT_EMAIL in in je .env om performance-mails te ontvangen
+        'email' => env('ALERT_EMAIL'),
+    ],
+
 ];

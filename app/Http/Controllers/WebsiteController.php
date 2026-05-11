@@ -10,7 +10,7 @@ class WebsiteController extends Controller
 {
     public function index()
     {
-        $websites = Website::all();
+        $websites = Website::where('user_id', auth()->id())->get();
         return view('websites.index', compact('websites'));
     }
 
@@ -21,34 +21,34 @@ class WebsiteController extends Controller
 
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
+        $validated = $request->validate([
             'name' => 'required|max:255',
             'url'  => 'required|url',
         ]);
-        Website::create($validatedData);
-        return redirect('websites')->with('success', 'Website created successfully.');
+        $validated['user_id'] = auth()->id();
+        Website::create($validated);
+        return redirect('websites')->with('success', 'Website aangemaakt.');
     }
+
     public function edit($id)
     {
-        $website = Website::findOrFail($id);
+        $website = Website::where('user_id', auth()->id())->findOrFail($id);
         return view('websites.edit', compact('website'));
     }
 
     public function update(Request $request, $id): RedirectResponse
     {
-        $website = Website::findOrFail($id);
-        $validatedData = $request->validate([
+        $website = Website::where('user_id', auth()->id())->findOrFail($id);
+        $website->update($request->validate([
             'name' => 'required|max:255',
             'url'  => 'required|url',
-        ]);
-        $website->update($validatedData);
-        return redirect()->route('websites.index')->with('success', 'Website updated successfully.');
+        ]));
+        return redirect()->route('websites.index')->with('success', 'Website bijgewerkt.');
     }
+
     public function delete($id)
     {
-        $website = Website::findOrFail($id);
-        $website->delete();
-        return redirect()->route('websites.index')->with('success', 'Website deleted successfully.');
+        Website::where('user_id', auth()->id())->findOrFail($id)->delete();
+        return redirect()->route('websites.index')->with('success', 'Website verwijderd.');
     }
 }
-
